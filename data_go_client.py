@@ -1,4 +1,4 @@
-﻿"""
+"""
 공공데이터포털 3종 API 클라이언트 모듈 (표준 라이브러리 기반)
 1. 식품의약품안전처_건강기능식품정보 (HtfsInfoService03)
    - getHtfsList01 (목록 조회)
@@ -28,12 +28,18 @@ class PublicDataClient:
     """공공데이터포털 3종 API 호출 및 데이터 수집 클라이언트"""
 
     def __init__(self, service_key: Optional[str] = None):
-        self.service_key = service_key or Config.DATA_GO_KR_API_KEY
-        if not self.service_key or self.service_key.startswith("your_"):
-            raise ValueError("[오류] 공공데이터포털 API 키(DATA_GO_KR_API_KEY)가 설정되지 않았습니다.")
+        raw_key = service_key or Config.DATA_GO_KR_API_KEY
+        if raw_key and not raw_key.startswith("your_"):
+            self.service_key = raw_key
+        else:
+            self.service_key = None
+            print("[주의] 공공데이터포털 API 키(DATA_GO_KR_API_KEY)가 미설정 상태입니다. (환경변수 등록 필요)")
 
     def _request(self, base_url: str, operation: str, params: Dict[str, Any]) -> Dict[str, Any]:
         """HTTP GET 요청 공통 처리 (JSON 응답 우선)"""
+        if not self.service_key:
+            return {"header": {"resultCode": "NO_API_KEY", "resultMsg": "공공데이터포털 API 키 미설정"}, "body": {"items": [], "totalCount": 0}}
+
         req_params = {
             "serviceKey": self.service_key,
             "type": "json",

@@ -150,7 +150,8 @@ except ImportError:
 app = FastAPI(
     title="Best Combo or Big Mistake",
     description="D&J Lab - 의약품 및 건강기능식품 병용 안전성 & 약리활성 시너지 분석 플랫폼",
-    version="1.0.0"
+    version="1.0.0",
+    redirect_slashes=False
 )
 
 if FASTAPI_AVAILABLE:
@@ -163,11 +164,27 @@ if FASTAPI_AVAILABLE:
         allow_headers=["*"],
     )
 
+    # Vercel 프록시 및 Rewrite 경로 복원 미들웨어
+    @app.middleware("http")
+    async def restore_vercel_path_middleware(request: Request, call_next):
+        # Vercel이 rewrites로 인해 /server.py로 호출했을 때 원본 경로 복원
+        matched = (
+            request.headers.get("x-matched-path")
+            or request.headers.get("x-forwarded-uri")
+            or request.headers.get("x-original-uri")
+        )
+        if matched and request.scope.get("path") in ["/server.py", "/server"]:
+            clean_path = matched.split("?")[0]
+            if clean_path.startswith("/api/") or clean_path in ["/status", "/analyze"]:
+                request.scope["path"] = clean_path
+        return await call_next(request)
+
     # 정적 파일 서빙 마운트 (/static/*)
     if STATIC_DIR.exists():
         app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
     @app.get("/")
+    @app.get("/index.html")
     async def vercel_root():
         """루트 경로 접속 시 index.html 서빙"""
         index_file = BASE_DIR / "index.html"
@@ -176,6 +193,9 @@ if FASTAPI_AVAILABLE:
         return FileResponse(str(index_file))
 
     @app.get("/api/status")
+    @app.get("/api/status/")
+    @app.get("/status")
+    @app.get("/status/")
     async def vercel_api_status():
         """7대 바이오 데이터베이스 연동 상태 확인"""
         return {
@@ -184,6 +204,9 @@ if FASTAPI_AVAILABLE:
         }
 
     @app.post("/api/analyze")
+    @app.post("/api/analyze/")
+    @app.post("/analyze")
+    @app.post("/analyze/")
     async def vercel_api_analyze(request: Request):
         """성분 목록(2개 이상)에 대한 병용 시너지 및 안전성 분석 API"""
         try:
@@ -244,6 +267,16 @@ if FASTAPI_AVAILABLE:
             import traceback
             traceback.print_exc()
             raise HTTPException(status_code=500, detail=str(e))
+
+    # Vercel이 /server.py로 직접 라우팅할 때를 대비한 전천후 디스패처
+    @app.api_route("/server.py", methods=["GET", "POST", "OPTIONS"])
+    @app.api_route("/server", methods=["GET", "POST", "OPTIONS"])
+    async def vercel_direct_server_dispatcher(request: Request):
+        if request.method == "POST":
+            return await vercel_api_analyze(request)
+        elif request.method == "GET":
+            return await vercel_api_status()
+        return JSONResponse(status_code=200, content={"status": "OK"})
 
 
 # ==============================================================================
