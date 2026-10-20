@@ -1,0 +1,10 @@
+# Web Framework & ASGI Server (Vercel Serverless)
+fastapi>=0.100.0
+uvicorn>=0.22.0
+
+# Environment Configuration
+python-dotenv>=1.0.0
+
+# HTTP & API Requests
+requests>=2.31.0
+httpx>=0.24.0

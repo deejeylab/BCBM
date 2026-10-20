@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Best Combo or Big Mistake - D&J Lab</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- 모든 세대에 친근하고 가독성 높은 폰트 조합: Gaegu, Jua(포근하고 친근함) + Pretendard / Noto Sans KR -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&family=Jua&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css">
+  <link rel="stylesheet" href="./static/style.css">
+</head>
+<body>
+
+  <!-- ========================================================================= -->
+  <!-- 1. 랜딩 페이지 (Landing View) - 구글 검색창 위치 중심 배치 -->
+  <!-- ========================================================================= -->
+  <section id="landing-page" class="view-active">
+    <div class="landing-container">
+      
+      <!-- 구글 메인 검색창 위치의 핵심 헤더 영역 -->
+      <div class="google-style-hero">
+        <div class="hero-badge">
+          <span class="badge-dot"></span>
+          <span>D&amp;J Lab 의약품 · 건강기능식품 병용 안전성 &amp; 시너지 분석기</span>
+        </div>
+
+        <h1 class="landing-title">
+          <span class="highlight-combo">Best Combo</span>
+          <span class="title-or">or</span>
+          <span class="highlight-mistake">Big Mistake</span>
+        </h1>
+
+        <p class="landing-subtitle">
+          매일 먹는 약과 영양제, 과연 최적의 조합일까요? 아니면 치명적인 실수일까요?<br>
+          식약처 공공데이터와 전 세계 7대 바이오 데이터베이스가 정확한 시너지와 위험을 분석합니다.
+        </p>
+
+        <!-- Logo1 원형 버튼 및 네온사인 클릭 유도 영역 -->
+        <div class="logo1-trigger-wrapper" id="btn-enter-search">
+          
+          <!-- 네온사인 스타일의 손가락 카툰 이미지 + Click here -->
+          <div class="neon-guide-sign">
+            <span class="neon-cartoon-finger" aria-hidden="true">👇</span>
+            <span class="neon-flicker-text">Click here</span>
+          </div>
+
+          <!-- 매끄러운 느낌의 원형 버튼 -->
+          <div class="logo1-circular-btn" title="클릭하여 성분 분석 시작하기">
+            <div class="circular-btn-surface">
+              <img src="./static/images/logo1.png" alt="D&J Lab Logo 1" class="logo1-img">
+            </div>
+            <div class="circular-btn-glow"></div>
+          </div>
+
+        </div>
+
+        <!-- 하단 데이터베이스 출처 뱃지 -->
+        <div class="trusted-db-bar">
+          <span class="db-title">통합 연동 데이터베이스:</span>
+          <span class="db-pill">식약처 DUR</span>
+          <span class="db-pill">식약처 건기식</span>
+          <span class="db-pill">PubMed</span>
+          <span class="db-pill">KEGG</span>
+          <span class="db-pill">DrugCombDB</span>
+          <span class="db-pill">DrugBank</span>
+          <span class="db-pill">DGIdb</span>
+          <span class="db-pill">PubChem &amp; ChEMBL</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ========================================================================= -->
+  <!-- 2. 검색 및 분석 페이지 (Search Page) -->
+  <!-- ========================================================================= -->
+  <section id="search-page" class="view-hidden">
+    
+    <!-- 상단 네비게이션 헤더 -->
+    <header class="search-header">
+      <div class="header-left">
+        <!-- 좌측 상단 신규 Logo2 이미지 (클릭 시 랜딩페이지로 이동) -->
+        <a href="javascript:void(0)" id="logo2-home-btn" title="랜딩 페이지로 돌아가기">
+          <img src="./static/images/logo2.png" alt="D&J Lab Logo 2" class="logo2-img">
+        </a>
+      </div>
+
+      <div class="header-right">
+        <div class="system-status-indicator">
+          <span class="status-dot online"></span>
+          <span class="status-label">7대 DB 실시간 엔진 가동 중</span>
+        </div>
+        <button id="btn-back-landing" class="btn-text-nav">
+          <i class="ri-home-4-line"></i> 처음으로
+        </button>
+      </div>
+    </header>
+
+    <!-- 검색 메인 컨테이너 -->
+    <main class="search-main-container">
+      
+      <div class="search-card">
+        <div class="search-card-header">
+          <h2><i class="ri-flask-line"></i> 병용 섭취 성분 입력</h2>
+          <p class="search-intro">
+            복용 중이거나 병용을 고민 중인 의약품 및 건강기능식품의 명칭(또는 성분명)을 입력하세요.
+          </p>
+        </div>
+
+        <!-- 빠른 조합 추천 태그 (프리셋) -->
+        <div class="preset-chips-wrap">
+          <span class="preset-label"><i class="ri-sparkling-fill"></i> 추천 테스트 조합:</span>
+          <button type="button" class="preset-chip" data-presets="아스피린,홍삼">아스피린 + 홍삼 (혈소판/출혈)</button>
+          <button type="button" class="preset-chip" data-presets="와파린,은행잎추출물">와파린 + 은행잎 (항응고 상호작용)</button>
+          <button type="button" class="preset-chip" data-presets="아스피린,오메가3">아스피린 + 오메가3 (혈행 개선 시너지)</button>
+          <button type="button" class="preset-chip" data-presets="메트포르민,베르베린">메트포르민 + 베르베린 (혈당 강하 시너지)</button>
+          <button type="button" class="preset-chip" data-presets="스타틴,홍국">스타틴 + 홍국 (HMG-CoA 중복금기)</button>
+        </div>
+
+        <!-- 동적 성분 입력창 영역 (기본 2개 제공) -->
+        <form id="ingredient-form" onsubmit="return false;">
+          
+          <div class="input-action-bar">
+            <span class="input-guide-text">
+              <i class="ri-information-line"></i> 기본 2개 성분 비교 분석 (3개 이상 시 다자간 조합 분석 지원)
+            </span>
+            <div class="button-group-dynamic">
+              <button type="button" id="btn-add-ingredient" class="btn-action-add">
+                <i class="ri-add-circle-line"></i> +추가
+              </button>
+              <!-- 3개 이상일 때만 동적으로 노출되는 삭제 버튼 -->
+              <button type="button" id="btn-remove-ingredient" class="btn-action-remove" style="display: none;">
+                <i class="ri-indeterminate-circle-line"></i> -삭제
+              </button>
+            </div>
+          </div>
+
+          <div id="ingredient-inputs-container" class="inputs-grid">
+            <!-- 기본 1번 입력창 (파스텔 블루) -->
+            <div class="ingredient-row pastel-blue" data-index="1">
+              <span class="row-num">1</span>
+              <div class="input-box-wrapper">
+                <i class="ri-capsule-line input-icon"></i>
+                <input type="text" class="ingredient-input" placeholder="성분 1: 의약품 또는 성분명 (예: 아스피린, 와파린, 메트포르민)" value="아스피린" required>
+              </div>
+            </div>
+
+            <!-- 기본 2번 입력창 (파스텔 민트) -->
+            <div class="ingredient-row pastel-mint" data-index="2">
+              <span class="row-num">2</span>
+              <div class="input-box-wrapper">
+                <i class="ri-leaf-line input-icon"></i>
+                <input type="text" class="ingredient-input" placeholder="성분 2: 건기식 또는 성분명 (예: 홍삼, 오메가3, 은행잎추출물)" value="홍삼" required>
+              </div>
+            </div>
+          </div>
+
+          <!-- 분석 실행 버튼 -->
+          <div class="submit-action-area">
+            <button type="button" id="btn-run-analysis" class="btn-submit-analyze">
+              <i class="ri-radar-line"></i> 병용 시너지 &amp; 병용금기 정밀 분석 시작
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+
+      <!-- 로딩 인디케이터 (분석 진행 중) -->
+      <div id="loading-container" class="loading-panel" style="display: none;">
+        <div class="spinner-molecule"></div>
+        <h3 id="loading-title">7대 바이오 데이터베이스 정밀 분석 중...</h3>
+        <p id="loading-detail">식약처 DUR 병용금기 및 KEGG/PubMed 분자 경로를 대조하고 있습니다.</p>
+        
+        <div class="loading-progress-steps">
+          <div class="step-item step-active" id="step-1"><i class="ri-checkbox-circle-line"></i> 식약처 DUR &amp; 건기식 주의사항</div>
+          <div class="step-item" id="step-2"><i class="ri-checkbox-circle-line"></i> DrugBank DDI/HDI 심각도 판별</div>
+          <div class="step-item" id="step-3"><i class="ri-checkbox-circle-line"></i> KEGG 대사 경로 &amp; DGIdb 표적 유전자</div>
+          <div class="step-item" id="step-4"><i class="ri-checkbox-circle-line"></i> PubMed 학술 문헌 &amp; DrugComb 시너지 점수</div>
+        </div>
+      </div>
+
+      <!-- 분석 결과 표시 대시보드 -->
+      <div id="results-container" class="results-dashboard" style="display: none;">
+        
+        <!-- [종합 판정] Executive Summary Card -->
+        <div class="card executive-summary-card" id="executive-card">
+          <div class="card-top-header">
+            <div class="title-with-badge">
+              <span class="badge-tag"><i class="ri-shield-cross-line"></i> 종합 분석 리포트</span>
+              <h2 id="eval-main-title">종합 판정 (Executive Evaluation)</h2>
+            </div>
+            <div class="export-actions">
+              <button type="button" class="btn-print" onclick="window.print()">
+                <i class="ri-printer-line"></i> 리포트 인쇄
+              </button>
+            </div>
+          </div>
+
+          <!-- 핵심 지표 요약 그리드 (시너지 지수 / 안전 등급) -->
+          <div class="eval-metrics-grid">
+            
+            <!-- 1. 시너지 지표 카드 -->
+            <div class="metric-card synergy-metric-box">
+              <div class="metric-head">
+                <span class="metric-label">약리활성 시너지 지수</span>
+                <span class="metric-grade-pill" id="eval-synergy-level">-</span>
+              </div>
+              <div class="metric-main-score">
+                <span class="score-number" id="eval-zip-score">0.0</span>
+                <span class="score-unit">점 / 10점 기준</span>
+              </div>
+              <div class="score-progress-bar">
+                <div class="score-progress-fill" id="eval-score-fill" style="width: 0%;"></div>
+              </div>
+              <div class="score-breakdown-sub">
+                <span>Bliss Score: <strong id="eval-bliss-score">-</strong></span>
+                <span>Loewe Index: <strong id="eval-loewe-score">-</strong></span>
+              </div>
+            </div>
+
+            <!-- 2. 안전 등급 카드 -->
+            <div class="metric-card safety-metric-box">
+              <div class="metric-head">
+                <span class="metric-label">병용 섭취 안전 등급</span>
+                <span class="metric-safety-pill" id="eval-safety-level">-</span>
+              </div>
+              <div class="safety-summary-desc" id="eval-safety-desc">
+                식약처 DUR 및 약물상호작용 데이터베이스 점검 결과입니다.
+              </div>
+              <div class="safety-check-tags">
+                <span class="check-tag" id="eval-dur-tag"><i class="ri-check-line"></i> 식약처 DUR 검증</span>
+                <span class="check-tag" id="eval-hdi-tag"><i class="ri-check-line"></i> DrugBank 심각도</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 3 & 4. 병용 시 시너지가 나거나 DDI가 나타날 수 있는 Pathway & Gene 섹션 -->
+          <div class="implicated-biological-section">
+            <h3 class="section-subheading">
+              <i class="ri-git-merge-line"></i> 병용 시 시너지 및 DDI(상호작용) 관여 핵심 Pathway &amp; Gene
+            </h3>
+            
+            <div class="pathway-gene-dual-grid">
+              
+              <!-- Pathway 목록 카드 -->
+              <div class="bio-panel pathway-panel">
+                <div class="bio-panel-header">
+                  <h4><i class="ri-route-line"></i> 관여 생화학 대사 경로 (Pathways)</h4>
+                  <span class="bio-count-pill" id="pathway-count-pill">0개</span>
+                </div>
+                <div id="eval-pathway-list" class="bio-items-list">
+                  <!-- 동적 삽입 -->
+                </div>
+              </div>
+
+              <!-- Gene 목록 카드 -->
+              <div class="bio-panel gene-panel">
+                <div class="bio-panel-header">
+                  <h4><i class="ri-dna-line"></i> 관여 핵심 표적 유전자 (Genes / Targets)</h4>
+                  <span class="bio-count-pill" id="gene-count-pill">0개</span>
+                </div>
+                <div id="eval-gene-list" class="bio-items-list">
+                  <!-- 동적 삽입 -->
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 5. 종합 임상 소견 텍스트 -->
+          <div class="eval-clinical-box">
+            <div class="clinical-icon"><i class="ri-nurse-line"></i></div>
+            <div class="clinical-content">
+              <h4>임상 및 약리학적 종합 가이드</h4>
+              <p id="eval-clinical-text">분석 결과를 집계 중입니다.</p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 3개 이상 다중 성분 입력 시: 다자간 조합 매트릭스 -->
+        <div id="pairwise-combinations-section" class="card pairwise-card" style="display: none;">
+          <h3><i class="ri-bubble-chart-line"></i> 다자간 성분 조합별 개별 시너지 매트릭스</h3>
+          <div id="pairwise-list" class="pairwise-grid">
+            <!-- 3개 이상 성분의 페어별 결과 -->
+          </div>
+        </div>
+
+        <!-- 세부 데이터베이스 상세 탭 섹션 -->
+        <div class="card detail-tabs-card">
+          <div class="tabs-nav">
+            <button type="button" class="tab-btn active" data-tab="tab-mfds">
+              <i class="ri-government-line"></i> 1. 식약처 DUR &amp; 건기식 주의사항
+            </button>
+            <button type="button" class="tab-btn" data-tab="tab-drugbank">
+              <i class="ri-medicine-bottle-line"></i> 2. DrugBank 상호작용(DDI/HDI)
+            </button>
+            <button type="button" class="tab-btn" data-tab="tab-pubmed">
+              <i class="ri-article-line"></i> 3. PubMed 실시간 학술 문헌
+            </button>
+            <button type="button" class="tab-btn" data-tab="tab-chemistry">
+              <i class="ri-test-tube-line"></i> 4. PubChem &amp; ChEMBL 분자 구조
+            </button>
+          </div>
+
+          <div class="tab-contents">
+            
+            <!-- 탭 1: 식약처 DUR & 건기식 -->
+            <div id="tab-mfds" class="tab-pane active">
+              <div class="mfds-detail-grid">
+                <div class="mfds-block">
+                  <h4>식약처 DUR 의약품 병용금기 조회 결과</h4>
+                  <div id="mfds-dur-content" class="content-box">조회 결과 로드 중...</div>
+                </div>
+                <div class="mfds-block">
+                  <h4>식약처 건강기능식품 섭취 시 주의사항 (약물 병용 경고)</h4>
+                  <div id="mfds-htfs-content" class="content-box">조회 결과 로드 중...</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 탭 2: DrugBank DDI/HDI -->
+            <div id="tab-drugbank" class="tab-pane">
+              <div id="drugbank-content" class="content-box">상호작용 기전 정보 로드 중...</div>
+            </div>
+
+            <!-- 탭 3: PubMed 문헌 -->
+            <div id="tab-pubmed" class="tab-pane">
+              <div id="pubmed-content" class="content-box">학술 연구 논문 로드 중...</div>
+            </div>
+
+            <!-- 탭 4: PubChem & ChEMBL 분자 구조 -->
+            <div id="tab-chemistry" class="tab-pane">
+              <div id="chem-content" class="content-box">분자 화학 정보 로드 중...</div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="app-footer">
+      <div class="footer-inner">
+        <p>© 2026 D&amp;J Lab. All Rights Reserved. 본 서비스의 분석 결과는 식약처 공공데이터 및 공개 학술 데이터베이스에 기반한 참고 정보이며, 구체적인 복약 지도는 의사 또는 약사와 상담하십시오.</p>
+      </div>
+    </footer>
+
+  </section>
+
+  <script src="./static/app.js"></script>
+</body>
+</html>
