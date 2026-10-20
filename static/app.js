@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Best Combo or Big Mistake - D&J Lab Frontend Controller
  */
 
@@ -163,21 +163,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 700);
 
     try {
-      let data;
-      try {
-        const response = await fetch("/api/analyze", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ingredients: ingredients })
-        });
-        if (response.ok) {
-          data = await response.json();
-        } else {
-          throw new Error("서버 응답 비정상");
+      let data = null;
+      const apiEndpoints = ["/api/analyze", "/analyze", "/server.py"];
+      let lastError = null;
+
+      for (const endpoint of apiEndpoints) {
+        try {
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ingredients: ingredients })
+          });
+          if (response.ok) {
+            data = await response.json();
+            break;
+          } else {
+            lastError = new Error(`HTTP ${response.status}`);
+          }
+        } catch (fetchErr) {
+          lastError = fetchErr;
         }
-      } catch (netErr) {
+      }
+
+      if (!data) {
         // GitHub Pages 등 백엔드 미구동 정적 환경 자동 감지 -> 데모 데이터 폴백
-        console.warn("백엔드 서버 미응답: GitHub Pages 정적 데모 모드로 폴백 렌더링합니다.", netErr);
+        console.warn("백엔드 서버 미응답: 정적 데모 모드로 폴백 렌더링합니다.", lastError);
         data = getStaticDemoData(ingredients);
       }
 
@@ -202,7 +212,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById("eval-main-title").innerHTML = `
       [${data.input_substances.map(s => s.kor).join(" + ")}] 종합 판정
-      ${data.is_static_demo ? '<span style="font-size:0.8rem; background:#fef3c7; color:#b45309; padding:2px 8px; border-radius:4px; margin-left:8px;">GitHub Pages 데모 모드</span>' : ''}
+      ${data.is_static_demo 
+        ? '<span style="font-size:0.8rem; background:#fef3c7; color:#b45309; padding:2px 8px; border-radius:4px; margin-left:8px;">정적 데모 모드</span>' 
+        : '<span style="font-size:0.8rem; background:#ecfdf5; color:#059669; padding:2px 8px; border-radius:4px; margin-left:8px;"><i class="ri-checkbox-circle-fill"></i> 7대 DB 실시간 라이브 분석</span>'}
     `;
 
     document.getElementById("eval-synergy-level").textContent = evalData.synergy_level;
