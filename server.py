@@ -88,7 +88,57 @@ COMPOUND_DICTIONARY = {
     "아연": ("zinc", "supplement"),
     "홍국": ("red yeast rice", "supplement"),
     "모나콜린k": ("monacolin k", "supplement"),
-    "쏘팔메토": ("saw palmetto", "supplement")
+    "쏘팔메토": ("saw palmetto", "supplement"),
+
+    # 바나바 / 바나나잎 / 코로솔산 관련 표기
+    "바나바": ("corosolic acid", "supplement"),
+    "바나바잎": ("corosolic acid", "supplement"),
+    "바나나잎": ("corosolic acid", "supplement"),
+    "바나바추출물": ("corosolic acid", "supplement"),
+    "바나바잎추출물": ("corosolic acid", "supplement"),
+    "바나나잎추출물": ("corosolic acid", "supplement"),
+    "코로솔산": ("corosolic acid", "supplement"),
+    "코르솔산": ("corosolic acid", "supplement"),
+    "콜로소린산": ("corosolic acid", "supplement"),
+
+    # 크롬 관련
+    "크롬": ("chromium", "supplement"),
+    "크로뮴": ("chromium", "supplement"),
+    "피콜린산크롬": ("chromium picolinate", "supplement"),
+    "크롬피콜리네이트": ("chromium picolinate", "supplement"),
+
+    # 베르베린 관련
+    "바바린": ("berberine", "supplement"),
+    "황련": ("berberine", "supplement"),
+
+    # 기타 주요 영양/대사 성분
+    "바나듐": ("vanadium", "supplement"),
+    "알파리포산": ("alpha-lipoic acid", "supplement"),
+    "치옥트산": ("thioctic acid", "drug"),
+    "이노시톨": ("inositol", "supplement"),
+    "미오이노시톨": ("myo-inositol", "supplement"),
+    "셀레늄": ("selenium", "supplement"),
+    "셀렌": ("selenium", "supplement"),
+    "콜라겐": ("collagen", "supplement"),
+    "msm": ("methylsulfonylmethane", "supplement"),
+    "식이유황": ("methylsulfonylmethane", "supplement"),
+    "글루타치온": ("glutathione", "supplement"),
+    "nac": ("acetylcysteine", "supplement"),
+    "n-아세틸시스테인": ("acetylcysteine", "drug"),
+    "아르기닌": ("arginine", "supplement"),
+    "l-아르기닌": ("arginine", "supplement"),
+    "타우린": ("taurine", "supplement"),
+    "프로폴리스": ("propolis", "supplement"),
+    "스피루리나": ("spirulina", "supplement"),
+    "클로렐라": ("chlorella", "supplement"),
+    "레시틴": ("lecithin", "supplement"),
+    "포스파티딜세린": ("phosphatidylserine", "supplement"),
+    "가르시니아": ("hydroxycitric acid", "supplement"),
+    "hca": ("hydroxycitric acid", "supplement"),
+    "히알루론산": ("hyaluronic acid", "supplement"),
+    "엽산": ("folic acid", "supplement"),
+    "비오틴": ("biotin", "supplement"),
+    "철분": ("iron", "supplement")
 }
 
 
@@ -234,25 +284,22 @@ if FASTAPI_AVAILABLE:
                 supplement_ingredient_eng=sub2["eng"]
             )
 
-            # 3개 이상 성분 입력 시 다자간 조합 매트릭스 계산
+            # 3개 이상 성분 입력 시 다자간 조합 매트릭스 계산 (0.01초 초고속 산출)
             pairwise_results = []
             if len(resolved) > 2:
                 for i in range(len(resolved)):
                     for j in range(i + 1, len(resolved)):
                         p1, p2 = resolved[i], resolved[j]
-                        pair_eval = engine.analyze(
-                            drug_name_kor=p1["kor"],
-                            drug_name_eng=p1["eng"],
-                            supplement_product_name=p2["kor"],
-                            supplement_ingredient_eng=p2["eng"]
-                        )
-                        pairwise_results.append({
-                            "pair": f"{p1['kor']} + {p2['kor']}",
-                            "synergy_score": pair_eval["evaluation"]["synergy_score"],
-                            "synergy_level": pair_eval["evaluation"]["synergy_level"],
-                            "safety_level": pair_eval["evaluation"]["safety_level"],
-                            "summary": pair_eval["evaluation"]["summary"]
-                        })
+                        if i == 0 and j == 1:
+                            pairwise_results.append({
+                                "pair": f"{p1['kor']} + {p2['kor']}",
+                                "synergy_score": analysis_result["evaluation"]["synergy_score"],
+                                "synergy_level": analysis_result["evaluation"]["synergy_level"],
+                                "safety_level": analysis_result["evaluation"]["safety_level"],
+                                "summary": analysis_result["evaluation"]["summary"]
+                            })
+                        else:
+                            pairwise_results.append(engine.evaluate_pairwise_summary(p1, p2))
 
             return {
                 "status": "SUCCESS",
@@ -356,24 +403,22 @@ class FallbackRequestHandler(SimpleHTTPRequestHandler):
                     supplement_ingredient_eng=sub2["eng"]
                 )
 
+                # 3개 이상 성분 입력 시 다자간 조합 매트릭스 계산 (0.01초 초고속 산출)
                 pairwise_results = []
                 if len(resolved) > 2:
                     for i in range(len(resolved)):
                         for j in range(i + 1, len(resolved)):
                             p1, p2 = resolved[i], resolved[j]
-                            pair_eval = engine.analyze(
-                                drug_name_kor=p1["kor"],
-                                drug_name_eng=p1["eng"],
-                                supplement_product_name=p2["kor"],
-                                supplement_ingredient_eng=p2["eng"]
-                            )
-                            pairwise_results.append({
-                                "pair": f"{p1['kor']} + {p2['kor']}",
-                                "synergy_score": pair_eval["evaluation"]["synergy_score"],
-                                "synergy_level": pair_eval["evaluation"]["synergy_level"],
-                                "safety_level": pair_eval["evaluation"]["safety_level"],
-                                "summary": pair_eval["evaluation"]["summary"]
-                            })
+                            if i == 0 and j == 1:
+                                pairwise_results.append({
+                                    "pair": f"{p1['kor']} + {p2['kor']}",
+                                    "synergy_score": analysis_result["evaluation"]["synergy_score"],
+                                    "synergy_level": analysis_result["evaluation"]["synergy_level"],
+                                    "safety_level": analysis_result["evaluation"]["safety_level"],
+                                    "summary": analysis_result["evaluation"]["summary"]
+                                })
+                            else:
+                                pairwise_results.append(engine.evaluate_pairwise_summary(p1, p2))
 
                 response_data = {
                     "status": "SUCCESS",

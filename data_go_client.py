@@ -60,7 +60,7 @@ class PublicDataClient:
         )
 
         try:
-            with urllib.request.urlopen(req, timeout=15) as resp:
+            with urllib.request.urlopen(req, timeout=6.0) as resp:
                 content = resp.read().decode("utf-8")
                 try:
                     return json.loads(content)

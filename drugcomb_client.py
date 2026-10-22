@@ -1,4 +1,4 @@
-﻿"""
+"""
 DrugCombDB (http://drugcombdb.denglab.org/) 약물 조합 시너지 지표 연동 모듈
 - 4대 표준 시너지 지수(Synergy Scores) 산출 및 평가:
   1. Bliss Independence Score (독립 확률 모델)
@@ -43,24 +43,26 @@ class DrugCombClient:
         - Score < -10: Antagonistic (상쇄/길항)
         """
         # 기본 점수 산출 가중치 (경로 공유도 + 타깃 공유도 + 실증 논문 근거)
-        pathway_weight = shared_pathways_count * 4.5
-        target_weight = shared_targets_count * 3.0
-        literature_weight = min(pubmed_positive_papers * 2.5, 10.0)
+        pathway_weight = min(shared_pathways_count * 2.5, 5.0)
+        target_weight = min(shared_targets_count * 1.5, 3.0)
+        literature_weight = min(pubmed_positive_papers * 1.0, 2.0)
 
-        # ZIP 점수 (0-점 기준 편차 모델)
+        # ZIP 점수 (0~10점 정규화 모델)
         base_score = pathway_weight + target_weight + literature_weight
+        if base_score > 0:
+            zip_score = round(min(base_score + 1.2, 9.6), 2)
+        else:
+            zip_score = 1.2
 
-        # 4대 시너지 지수 추정
-        zip_score = round(base_score + 1.2, 2)
-        bliss_score = round(base_score * 0.95 + 0.8, 2)
-        loewe_score = round(base_score * 1.05 + 1.5, 2)
-        hsa_score = round(base_score * 0.85 + 2.0, 2)
+        bliss_score = round(max(zip_score * 0.91, 1.0), 2)
+        loewe_score = round(min(zip_score * 1.08, 9.9), 2)
+        hsa_score = round(max(zip_score * 0.88, 1.0), 2)
 
         # 조합 분류 (Combination Classification)
-        if zip_score >= 10.0:
+        if zip_score >= 7.5:
             classification = "SYNERGISTIC (상승 시너지)"
             interpretation = "두 물질이 상호 보완적인 타깃이나 동일 생화학 경로를 다각도로 공략하여 단독 투여 효과의 합보다 유의미하게 높은 약리활성 시너지가 발생할 가능성이 높습니다."
-        elif zip_score >= 2.0:
+        elif zip_score >= 3.0:
             classification = "ADDITIVE (상가/보조 작용)"
             interpretation = "두 성분의 효과가 독립적이거나 상가적인 형태로 결합하여 완만한 보조 효과를 낼 가능성이 높습니다."
         else:
@@ -75,7 +77,7 @@ class DrugCombClient:
                 "Bliss_Score": bliss_score,
                 "Loewe_Score": loewe_score,
                 "HSA_Score": hsa_score,
-                "Synergy_Threshold": "> 10.0 indicates strong synergy"
+                "Synergy_Threshold": ">= 7.5 indicates strong synergy"
             },
             "classification": classification,
             "interpretation": interpretation,
